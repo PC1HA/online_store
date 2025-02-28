@@ -1,5 +1,9 @@
+import os
+from pathlib import Path
+
 from src.category import Category
 from src.product import Product
+from src.utils import load_data_from_json
 
 
 if __name__ == "__main__":
@@ -44,3 +48,9 @@ if __name__ == "__main__":
 
     print(Category.category_count)
     print(Category.product_count)
+
+    file_path = os.path.join(Path(__file__).parent, 'data/products.json')
+    categories = load_data_from_json(file_path)
+
+    for category in categories:
+        print(category)
