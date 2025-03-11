@@ -8,7 +8,7 @@ class Product:
     Атрибуты:
         name (str): Название продукта.
         description (str): Описание продукта.
-        _price (float): Цена продукта (приватный).
+        __price (float): Цена продукта (приватный).
         quantity (int): Количество продукта на складе.
     """
 
@@ -64,7 +64,7 @@ class Product:
         quantity: Optional[int] = product_data.get("quantity")
 
         if name is None or description is None or price is None or quantity is None:
-            raise ValueError("Product data must contain name, description, price and quantity")
+            raise ValueError("Данные о продукте должны содержать название, описание, цену и количество.")
 
         if existing_products:
             for existing_product in existing_products:
