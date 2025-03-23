@@ -34,9 +34,9 @@ class TestLoadDataFromJson(unittest.TestCase):
             self.assertEqual(len(categories), 1)
             self.assertIsInstance(categories[0], Category)
             self.assertEqual(categories[0].name, "Electronics")
-            self.assertEqual(len(categories[0].get_products()), 2)
-            self.assertEqual(categories[0].get_products()[0].name, "Smartphone")
-            self.assertEqual(categories[0].get_products()[1].name, "Laptop")
+            self.assertEqual(len(categories[0].get_products), 2)
+            self.assertEqual(categories[0].get_products[0].name, "Smartphone")
+            self.assertEqual(categories[0].get_products[1].name, "Laptop")
 
     def test_load_data_file_not_found(self) -> None:
         with patch("builtins.open", side_effect=FileNotFoundError):

@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Iterator, List, Optional
 
 from src.product import Product
 
@@ -35,6 +35,12 @@ class Category:
         self.__products = products if products is not None else []
         Category.category_count += 1
 
+    def __str__(self) -> str:
+        return f"{self.name}: {len(self.__products)} продуктов"
+
+    def __iter__(self) -> 'CategoryIterator':
+        return CategoryIterator(self)
+
     def add_product(self, product: Product) -> None:
         """
         Добавление продукта в категорию.
@@ -53,10 +59,43 @@ class Category:
         Возвращает:
             str: Информация о продуктах в категории.
         """
-        return "\n".join(
-            f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт." for product in self.__products
-        )
+        return "\n".join(str(product) for product in self.__products)
 
+    @property
     def get_products(self) -> List["Product"]:
         """Возвращает список продуктов в категории."""
         return self.__products
+
+
+class CategoryIterator(Iterator):
+    def __init__(self, category: "Category"):
+        """
+        Инициализирует итератор для категории.
+
+        :param category: Объект категории, по товарам которой будет производиться итерация.
+        """
+        self.category = category
+        self.index = 0
+
+    def __iter__(self) -> "CategoryIterator":
+        """
+        Возвращает сам объект итератора.
+
+        :return: Объект CategoryIterator.
+        """
+        return self
+
+    def __next__(self) -> "Product":
+        """
+        Возвращает следующий продукт в категории.
+
+        :return: Следующий продукт в категории.
+
+        :raises StopIteration: Если все продукты были перебраны.
+        """
+        if self.index < len(self.category.get_products):
+            product = self.category.get_products[self.index]
+            self.index += 1
+            return product
+        else:
+            raise StopIteration
