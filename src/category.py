@@ -36,7 +36,7 @@ class Category:
         Category.category_count += 1
 
     def __str__(self) -> str:
-        return f"{self.name}: {len(self.__products)} продуктов"
+        return f"{self.name}: {sum(product.quantity for product in self.__products)} продуктов"
 
     def __iter__(self) -> 'CategoryIterator':
         return CategoryIterator(self)
