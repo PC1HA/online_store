@@ -32,6 +32,12 @@ class Product:
         self.__price = price
         self.quantity = quantity
 
+    def __str__(self) -> str:
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        return self.price * self.quantity + other.price * other.quantity
+
     @property
     def price(self) -> float:
         """Геттер для получения цены продукта."""
@@ -41,7 +47,7 @@ class Product:
     def price(self, value: float) -> None:
         """Сеттер для установки цены продукта с проверкой."""
         if value <= 0:
-            print("Цена не должна быть нулевая или отрицательная")
+            raise ValueError("Цена не должна быть нулевая или отрицательная")
         else:
             if value < self.__price:
                 confirm = input(f"Вы уверены, что хотите понизить цену с {self.__price} до {value}? (y/n): ")
