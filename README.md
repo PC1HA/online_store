@@ -37,39 +37,30 @@ if __name__ == "__main__":
     product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
     product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
 
+    print(str(product1))
+    print(str(product2))
+    print(str(product3))
+
     category1 = Category(
         "Смартфоны",
         "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
         [product1, product2, product3]
     )
 
-    print(category1.products_info)
-    product4 = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
-    category1.add_product(product4)
-    print(category1.products_info)
-    print(category1.product_count)
+    print(str(category1))
 
-    new_product = Product.new_product(
-        {"name": "Samsung Galaxy S23 Ultra", "description": "256GB, Серый цвет, 200MP камера", "price": 180000.0,
-         "quantity": 5})
-    print(new_product.name)
-    print(new_product.description)
-    print(new_product.price)
-    print(new_product.quantity)
+    print(category1.get_products)
 
-    new_product.price = 800
-    print(new_product.price)
-
-    new_product.price = -100
-    print(new_product.price)
-    new_product.price = 0
-    print(new_product.price)
+    print(product1 + product2)
+    print(product1 + product3)
+    print(product2 + product3)
 
     file_path = os.path.join(Path(__file__).parent, 'data/products.json')
     categories = load_data_from_json(file_path)
 
     for category in categories:
         print(category)
+
 ```
 
 ### Файл ```categoty.py```
@@ -158,39 +149,46 @@ from src.product import Product
 
 
 class TestCategory(unittest.TestCase):
-    """Тесты для класса Category."""
-
     def setUp(self) -> None:
-        """Настройка тестовой среды."""
+        self.category = Category("Electronics", "Devices and gadgets")
+        self.product1 = Product("Smartphone", "Latest model", 699.99, 10)
+        self.product2 = Product("Laptop", "Gaming laptop", 1299.99, 5)
+
+    def tearDown(self) -> None:
+        Category.category_count = 0
         Category.product_count = 0
-        self.category = Category("Электроника", "Всякая электроника")
-        self.product1 = Product("Ноутбук", "Мощный ноутбук", 1200.00, 5)
-        self.product2 = Product("Смартфон", "Современный смартфон", 800.00, 10)
 
     def test_add_product(self) -> None:
-        """Тестирование добавления продукта в категорию."""
         self.category.add_product(self.product1)
         self.category.add_product(self.product2)
-        self.assertEqual(len(self.category.get_products()), 2)
-        self.assertIn(self.product1, self.category.get_products())
-        self.assertIn(self.product2, self.category.get_products())
+        self.assertEqual(len(self.category.get_products), 2)
+        self.assertIn(self.product1, self.category.get_products)
+        self.assertIn(self.product2, self.category.get_products)
 
     def test_products_info(self) -> None:
-        """Тестирование получения информации о продуктах в категории."""
         self.category.add_product(self.product1)
         self.category.add_product(self.product2)
-
-        expected_info = "Ноутбук, 1200.0 руб. Остаток: 5 шт.\n" "Смартфон, 800.0 руб. Остаток: 10 шт."
+        expected_info = f"{self.product1}\n{self.product2}"
         self.assertEqual(self.category.products_info, expected_info)
 
-    def test_initial_category_count(self) -> None:
-        """Тестирование начального количества категорий."""
-        initial_count = Category.category_count
-        Category("Бытовая техника", "Техника для дома")
-        self.assertEqual(Category.category_count, initial_count + 1)
+    def test_category_str(self) -> None:
+        self.assertEqual(str(self.category), "Electronics: 0 продуктов")
+        self.category.add_product(self.product1)
+        self.assertEqual(str(self.category), "Electronics: 1 продуктов")
+
+    def test_iterate_products(self) -> None:
+        self.category.add_product(self.product1)
+        self.category.add_product(self.product2)
+        products = [product for product in self.category]
+        self.assertEqual(products, [self.product1, self.product2])
+
+    def test_category_count(self) -> None:
+        self.assertEqual(Category.category_count, 1)
+        Category("Home Appliances", "Kitchen and home devices")
+        self.assertEqual(Category.category_count, 2)
 
     def test_product_count(self) -> None:
-        """Тестирование общего количества продуктов в категориях."""
+        self.assertEqual(Category.product_count, 0)
         self.category.add_product(self.product1)
         self.category.add_product(self.product2)
         self.assertEqual(Category.product_count, 2)
@@ -202,55 +200,60 @@ class TestCategory(unittest.TestCase):
 ```
 import unittest
 from typing import List
-from unittest import mock
+from unittest import mock   # noqa: F401
 
 from src.product import Product
 
 
 class TestProduct(unittest.TestCase):
-
     def setUp(self) -> None:
-        self.product = Product("Ноутбук", "Мощный ноутбук", 1200.00, 10)
+        self.product1 = Product("Товар 1", "Описание товара 1", 100.0, 10)
+        self.product2 = Product("Товар 2", "Описание товара 2", 200.0, 5)
 
-    def test_initial_attributes(self) -> None:
-        self.assertEqual(self.product.name, "Ноутбук")
-        self.assertEqual(self.product.description, "Мощный ноутбук")
-        self.assertEqual(self.product.price, 1200.00)
-        self.assertEqual(self.product.quantity, 10)
+    def test_initialization(self) -> None:
+        self.assertEqual(self.product1.name, "Товар 1")
+        self.assertEqual(self.product1.description, "Описание товара 1")
+        self.assertEqual(self.product1.price, 100.0)
+        self.assertEqual(self.product1.quantity, 10)
 
-    def test_price_setter(self) -> None:
-        self.product.price = 1300.00
-        self.assertEqual(self.product.price, 1300.00)
+    def test_str_method(self) -> None:
+        self.assertEqual(str(self.product1), "Товар 1, 100.0 руб. Остаток: 10 шт.")
 
-    def test_price_setter_negative_value(self) -> None:
-        with mock.patch("builtins.print") as mocked_print:
-            self.product.price = -500
-            mocked_print.assert_called_with("Цена не должна быть нулевая или отрицательная")
+    def test_addition(self) -> None:
+        total_price = self.product1 + self.product2
+        self.assertEqual(total_price, 300.0)
 
-    def test_price_setter_lower_value_with_confirmation(self) -> None:
-        with mock.patch("builtins.input", return_value="y"):
-            self.product.price = 1000.00
-            self.assertEqual(self.product.price, 1000.00)
+    def test_price_setter_valid(self) -> None:
+        self.product1.price = 150.0
+        self.assertEqual(self.product1.price, 150.0)
 
-    def test_price_setter_lower_value_without_confirmation(self) -> None:
-        with mock.patch("builtins.input", return_value="n"):
-            self.product.price = 1000.00
-            self.assertEqual(self.product.price, 1200.00)
+    def test_price_setter_invalid(self) -> None:
+        with self.assertRaises(ValueError):
+            self.product1.price = -50.0
 
-    def test_new_product(self) -> None:
-        product_data = {"name": "Смартфон", "description": "Современный смартфон", "price": 800.00, "quantity": 5}
+    def test_price_setter_lower(self) -> None:
+        with unittest.mock.patch("builtins.input", side_effect=["y"]):
+            self.product1.price = 50.0
+            self.assertEqual(self.product1.price, 50.0)
+
+    def test_new_product_creation(self) -> None:
+        product_data = {"name": "Товар 3", "description": "Описание товара 3", "price": 300.0, "quantity": 20}
         new_product = Product.new_product(product_data)
-        self.assertEqual(new_product.name, "Смартфон")
-        self.assertEqual(new_product.description, "Современный смартфон")
-        self.assertEqual(new_product.price, 800.00)
-        self.assertEqual(new_product.quantity, 5)
+        self.assertEqual(new_product.name, "Товар 3")
+        self.assertEqual(new_product.price, 300.0)
+        self.assertEqual(new_product.quantity, 20)
 
     def test_new_product_existing(self) -> None:
-        existing_products: List[Product] = [self.product]
-        product_data = {"name": "Ноутбук", "description": "Мощный ноутбук", "price": 1300.00, "quantity": 5}
-        existing_product = Product.new_product(product_data, existing_products)
-        self.assertEqual(existing_product.quantity, 15)
-        self.assertEqual(existing_product.price, 1300.00)
+        existing_products: List[Product] = [self.product1]
+        product_data = {"name": "Товар 1", "description": "Описание товара 1", "price": 120.0, "quantity": 5}
+        updated_product = Product.new_product(product_data, existing_products)
+        self.assertEqual(updated_product.quantity, 15)
+        self.assertEqual(updated_product.price, 120.0)
+
+    def test_new_product_invalid_data(self) -> None:
+        product_data = {"name": "Товар 4", "description": "Описание товара 4", "price": -100.0, "quantity": 10}
+        with self.assertRaises(ValueError):
+            Product.new_product(product_data)
 
 ```
 
@@ -293,9 +296,9 @@ class TestLoadDataFromJson(unittest.TestCase):
             self.assertEqual(len(categories), 1)
             self.assertIsInstance(categories[0], Category)
             self.assertEqual(categories[0].name, "Electronics")
-            self.assertEqual(len(categories[0].get_products()), 2)
-            self.assertEqual(categories[0].get_products()[0].name, "Smartphone")
-            self.assertEqual(categories[0].get_products()[1].name, "Laptop")
+            self.assertEqual(len(categories[0].get_products), 2)
+            self.assertEqual(categories[0].get_products[0].name, "Smartphone")
+            self.assertEqual(categories[0].get_products[1].name, "Laptop")
 
     def test_load_data_file_not_found(self) -> None:
         with patch("builtins.open", side_effect=FileNotFoundError):
