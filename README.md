@@ -24,42 +24,90 @@
 Пример для конфига ```main.py```
 
 ```
-import os
-from pathlib import Path
-
 from src.category import Category
-from src.product import Product
-from src.utils import load_data_from_json
+from src.product import Smartphone, LawnGrass
 
 
-if __name__ == "__main__":
-    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+if __name__ == '__main__':
+    smartphone1 = Smartphone("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5, 95.5,
+                         "S23 Ultra", 256, "Серый")
+    smartphone2 = Smartphone("Iphone 15", "512GB, Gray space", 210000.0, 8, 98.2, "15", 512, "Gray space")
+    smartphone3 = Smartphone("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14, 90.3, "Note 11", 1024, "Синий")
 
-    print(str(product1))
-    print(str(product2))
-    print(str(product3))
+    print(smartphone1.name)
+    print(smartphone1.description)
+    print(smartphone1.price)
+    print(smartphone1.quantity)
+    print(smartphone1.efficiency)
+    print(smartphone1.model)
+    print(smartphone1.memory)
+    print(smartphone1.color)
 
-    category1 = Category(
-        "Смартфоны",
-        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
-        [product1, product2, product3]
-    )
+    print(smartphone2.name)
+    print(smartphone2.description)
+    print(smartphone2.price)
+    print(smartphone2.quantity)
+    print(smartphone2.efficiency)
+    print(smartphone2.model)
+    print(smartphone2.memory)
+    print(smartphone2.color)
 
-    print(str(category1))
+    print(smartphone3.name)
+    print(smartphone3.description)
+    print(smartphone3.price)
+    print(smartphone3.quantity)
+    print(smartphone3.efficiency)
+    print(smartphone3.model)
+    print(smartphone3.memory)
+    print(smartphone3.color)
 
-    print(category1.get_products)
+    grass1 = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
+    grass2 = LawnGrass("Газонная трава 2", "Выносливая трава", 450.0, 15, "США", "5 дней", "Темно-зеленый")
 
-    print(product1 + product2)
-    print(product1 + product3)
-    print(product2 + product3)
+    print(grass1.name)
+    print(grass1.description)
+    print(grass1.price)
+    print(grass1.quantity)
+    print(grass1.country)
+    print(grass1.germination_period)
+    print(grass1.color)
 
-    file_path = os.path.join(Path(__file__).parent, 'data/products.json')
-    categories = load_data_from_json(file_path)
+    print(grass2.name)
+    print(grass2.description)
+    print(grass2.price)
+    print(grass2.quantity)
+    print(grass2.country)
+    print(grass2.germination_period)
+    print(grass2.color)
 
-    for category in categories:
-        print(category)
+    smartphone_sum = smartphone1 + smartphone2
+    print(smartphone_sum)
+
+    grass_sum = grass1 + grass2
+    print(grass_sum)
+
+    try:
+        invalid_sum = smartphone1 + grass1
+    except TypeError:
+        print("Возникла ошибка TypeError при попытке сложения")
+    else:
+        print("Не возникла ошибка TypeError при попытке сложения")
+
+    category_smartphones = Category("Смартфоны", "Высокотехнологичные смартфоны", [smartphone1, smartphone2])
+    category_grass = Category("Газонная трава", "Различные виды газонной травы", [grass1, grass2])
+
+    category_smartphones.add_product(smartphone3)
+
+    print(category_smartphones.get_products)
+    print(category_grass.get_products)
+    print(Category.product_count)
+
+    try:
+        category_smartphones.add_product("Not a product")
+    except TypeError:
+        print("Возникла ошибка TypeError при добавлении не продукта")
+    else:
+        print("Не возникла ошибка TypeError при добавлении не продукта")
 
 ```
 
@@ -127,6 +175,30 @@ if __name__ == "__main__":
 - ```@classmethod new_product```
 
     Класс-метод для создания нового продукта.
+#### Подкласс Смартфон ```class Smartphone(Product)```
+Класс, представляющий смартфон.
+
+    Атрибуты:
+        name (str): Название продукта.
+        description (str): Описание продукта.
+        __price (float): Цена продукта (приватный).
+        quantity (int): Количество продукта на складе.
+        efficiency (float): производительность.
+        model (str): модель.
+        memory (int): объем встроенной памяти.
+        color (str): цвет.
+
+#### Подкласс газонная трава ```class LawnGrass(Product)```
+Класс, представляющий газонную траву.
+
+    Атрибуты:
+        name (str): Название продукта.
+        description (str): Описание продукта.
+        __price (float): Цена продукта (приватный).
+        quantity (int): Количество продукта на складе.
+        country (str): страна-производитель.
+        germination_period (str): срок прорастания.
+        color (str): цвет.
 
 ### Файл ```utils.py```
 
@@ -143,55 +215,54 @@ if __name__ == "__main__":
 
 ```
 import unittest
+from typing import List
 
 from src.category import Category
 from src.product import Product
 
 
 class TestCategory(unittest.TestCase):
-    def setUp(self) -> None:
-        self.category = Category("Electronics", "Devices and gadgets")
-        self.product1 = Product("Smartphone", "Latest model", 699.99, 10)
-        self.product2 = Product("Laptop", "Gaming laptop", 1299.99, 5)
 
-    def tearDown(self) -> None:
-        Category.category_count = 0
-        Category.product_count = 0
+    def setUp(self) -> None:
+        """Создание тестовых данных перед каждым тестом."""
+        self.product1 = Product("Товар 1", "Описание товара 1", 100.0, 10)
+        self.product2 = Product("Товар 2", "Описание товара 2", 200.0, 5)
+        self.category = Category("Категория 1", "Описание категории 1", [self.product1, self.product2])
+
+    def test_category_creation(self) -> None:
+        """Тестирование создания категории."""
+        self.assertEqual(self.category.name, "Категория 1")
+        self.assertEqual(self.category.description, "Описание категории 1")
+        self.assertEqual(len(self.category.get_products), 2)
 
     def test_add_product(self) -> None:
-        self.category.add_product(self.product1)
-        self.category.add_product(self.product2)
-        self.assertEqual(len(self.category.get_products), 2)
-        self.assertIn(self.product1, self.category.get_products)
-        self.assertIn(self.product2, self.category.get_products)
+        """Тестирование добавления продукта в категорию."""
+        product3 = Product("Товар 3", "Описание товара 3", 150.0, 20)
+        self.category.add_product(product3)
+        self.assertEqual(len(self.category.get_products), 3)
+        self.assertIn(product3, self.category.get_products)
+
+    def test_add_invalid_product(self) -> None:
+        """Тестирование добавления недопустимого продукта."""
+        with self.assertRaises(TypeError):
+            self.category.add_product("Некорректный продукт")   # type: ignore
+
+    def test_str_method(self) -> None:
+        """Тестирование метода __str__."""
+        self.assertEqual(str(self.category), "Категория 1: 15 продуктов")  # 10 + 5
 
     def test_products_info(self) -> None:
-        self.category.add_product(self.product1)
-        self.category.add_product(self.product2)
-        expected_info = f"{self.product1}\n{self.product2}"
+        """Тестирование получения информации о продуктах."""
+        expected_info = (
+            f"{self.product1.name}, {self.product1.price} руб. Остаток: {self.product1.quantity} шт.\n"
+            f"{self.product2.name}, {self.product2.price} руб. Остаток: {self.product2.quantity} шт."
+        )
         self.assertEqual(self.category.products_info, expected_info)
 
-    def test_category_str(self) -> None:
-        self.assertEqual(str(self.category), "Electronics: 0 продуктов")
-        self.category.add_product(self.product1)
-        self.assertEqual(str(self.category), "Electronics: 1 продуктов")
-
-    def test_iterate_products(self) -> None:
-        self.category.add_product(self.product1)
-        self.category.add_product(self.product2)
-        products = [product for product in self.category]
+    def test_iterator(self) -> None:
+        """Тестирование итератора категории."""
+        products: List[Product] = list(iter(self.category))
         self.assertEqual(products, [self.product1, self.product2])
-
-    def test_category_count(self) -> None:
-        self.assertEqual(Category.category_count, 1)
-        Category("Home Appliances", "Kitchen and home devices")
-        self.assertEqual(Category.category_count, 2)
-
-    def test_product_count(self) -> None:
-        self.assertEqual(Category.product_count, 0)
-        self.category.add_product(self.product1)
-        self.category.add_product(self.product2)
-        self.assertEqual(Category.product_count, 2)
 
 ```
 
@@ -200,9 +271,9 @@ class TestCategory(unittest.TestCase):
 ```
 import unittest
 from typing import List
-from unittest import mock   # noqa: F401
+from unittest import mock  # noqa: F401
 
-from src.product import Product
+from src.product import LawnGrass, Product, Smartphone
 
 
 class TestProduct(unittest.TestCase):
@@ -221,7 +292,7 @@ class TestProduct(unittest.TestCase):
 
     def test_addition(self) -> None:
         total_price = self.product1 + self.product2
-        self.assertEqual(total_price, 300.0)
+        self.assertEqual(total_price, 2000.0)
 
     def test_price_setter_valid(self) -> None:
         self.product1.price = 150.0
@@ -254,6 +325,59 @@ class TestProduct(unittest.TestCase):
         product_data = {"name": "Товар 4", "description": "Описание товара 4", "price": -100.0, "quantity": 10}
         with self.assertRaises(ValueError):
             Product.new_product(product_data)
+
+
+class TestSmartphone(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Создание тестовых данных для смартфонов."""
+        self.smartphone = Smartphone(
+            "Смартфон 1",
+            "Описание смартфона 1",
+            500.0,
+            20,
+            efficiency=2.5,
+            model="Модель 1",
+            memory=64,
+            color="Черный",
+        )
+
+    def test_smartphone_creation(self) -> None:
+        """Тестирование создания смартфона."""
+        self.assertEqual(self.smartphone.name, "Смартфон 1")
+        self.assertEqual(self.smartphone.efficiency, 2.5)
+        self.assertEqual(self.smartphone.memory, 64)
+
+    def test_smartphone_price(self) -> None:
+        """Тестирование изменения цены смартфона."""
+        self.smartphone.price = 600.0
+        self.assertEqual(self.smartphone.price, 600.0)
+
+
+class TestLawnGrass(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Создание тестовых данных для газонной травы."""
+        self.lawn_grass = LawnGrass(
+            "Газонная трава 1",
+            "Описание газонной травы 1",
+            50.0,
+            100,
+            country="Россия",
+            germination_period="10-14 дней",
+            color="Зеленый",
+        )
+
+    def test_lawn_grass_creation(self) -> None:
+        """Тестирование создания газонной травы."""
+        self.assertEqual(self.lawn_grass.name, "Газонная трава 1")
+        self.assertEqual(self.lawn_grass.country, "Россия")
+        self.assertEqual(self.lawn_grass.germination_period, "10-14 дней")
+
+    def test_lawn_grass_price(self) -> None:
+        """Тестирование изменения цены газонной травы."""
+        self.lawn_grass.price = 55.0
+        self.assertEqual(self.lawn_grass.price, 55.0)
 
 ```
 

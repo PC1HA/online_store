@@ -1,5 +1,7 @@
 from typing import Any, Iterator, List, Optional
 
+from isort.exceptions import ProfileDoesNotExist
+
 from src.product import Product
 
 
@@ -38,7 +40,7 @@ class Category:
     def __str__(self) -> str:
         return f"{self.name}: {sum(product.quantity for product in self.__products)} продуктов"
 
-    def __iter__(self) -> 'CategoryIterator':
+    def __iter__(self) -> "CategoryIterator":
         return CategoryIterator(self)
 
     def add_product(self, product: Product) -> None:
@@ -48,6 +50,9 @@ class Category:
         Параметры:
             product (Product): Продукт, который будет добавлен в категорию.
         """
+        if not isinstance(product, Product):
+            raise TypeError("Ожидается объект типа Product")
+
         self.__products.append(product)
         Category.product_count += 1
 
