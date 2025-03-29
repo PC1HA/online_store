@@ -36,7 +36,11 @@ class Product:
         return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other: "Product") -> float:
-        return self.price * self.quantity + other.price * other.quantity
+        if type(other) is self.__class__:
+            return self.price * self.quantity + other.price * other.quantity
+
+        else:
+            raise TypeError
 
     @property
     def price(self) -> float:
@@ -83,3 +87,66 @@ class Product:
             raise ValueError("Цена должна быть положительной, а количество неотрицательным.")
 
         return cls(name, description, price, quantity)
+
+
+class Smartphone(Product):
+    """
+    Класс, представляющий смартфон.
+
+    Атрибуты:
+        name (str): Название продукта.
+        description (str): Описание продукта.
+        __price (float): Цена продукта (приватный).
+        quantity (int): Количество продукта на складе.
+        efficiency (float): производительность.
+        model (str): модель.
+        memory (int): объем встроенной памяти.
+        color (str): цвет.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        efficiency: float,
+        model: str,
+        memory: int,
+        color: str,
+    ) -> None:
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    """
+    Класс, представляющий газонную траву.
+
+    Атрибуты:
+        name (str): Название продукта.
+        description (str): Описание продукта.
+        __price (float): Цена продукта (приватный).
+        quantity (int): Количество продукта на складе.
+        country (str): страна-производитель.
+        germination_period (str): срок прорастания.
+        color (str): цвет.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        price: float,
+        quantity: int,
+        country: str,
+        germination_period: str,
+        color: str,
+    ) -> None:
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
