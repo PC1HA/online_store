@@ -1,9 +1,5 @@
-import os
-from pathlib import Path
-
 from src.category import Category
 from src.product import Smartphone, LawnGrass
-from src.utils import load_data_from_json
 
 
 if __name__ == '__main__':
