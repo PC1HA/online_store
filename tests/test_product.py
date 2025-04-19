@@ -1,8 +1,8 @@
 import unittest
 from typing import List
-from unittest import mock   # noqa: F401
+from unittest import mock  # noqa: F401
 
-from src.product import Product
+from src.product import LawnGrass, Product, Smartphone
 
 
 class TestProduct(unittest.TestCase):
@@ -21,7 +21,7 @@ class TestProduct(unittest.TestCase):
 
     def test_addition(self) -> None:
         total_price = self.product1 + self.product2
-        self.assertEqual(total_price, 300.0)
+        self.assertEqual(total_price, 2000.0)
 
     def test_price_setter_valid(self) -> None:
         self.product1.price = 150.0
@@ -54,3 +54,56 @@ class TestProduct(unittest.TestCase):
         product_data = {"name": "Товар 4", "description": "Описание товара 4", "price": -100.0, "quantity": 10}
         with self.assertRaises(ValueError):
             Product.new_product(product_data)
+
+
+class TestSmartphone(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Создание тестовых данных для смартфонов."""
+        self.smartphone = Smartphone(
+            "Смартфон 1",
+            "Описание смартфона 1",
+            500.0,
+            20,
+            efficiency=2.5,
+            model="Модель 1",
+            memory=64,
+            color="Черный",
+        )
+
+    def test_smartphone_creation(self) -> None:
+        """Тестирование создания смартфона."""
+        self.assertEqual(self.smartphone.name, "Смартфон 1")
+        self.assertEqual(self.smartphone.efficiency, 2.5)
+        self.assertEqual(self.smartphone.memory, 64)
+
+    def test_smartphone_price(self) -> None:
+        """Тестирование изменения цены смартфона."""
+        self.smartphone.price = 600.0
+        self.assertEqual(self.smartphone.price, 600.0)
+
+
+class TestLawnGrass(unittest.TestCase):
+
+    def setUp(self) -> None:
+        """Создание тестовых данных для газонной травы."""
+        self.lawn_grass = LawnGrass(
+            "Газонная трава 1",
+            "Описание газонной травы 1",
+            50.0,
+            100,
+            country="Россия",
+            germination_period="10-14 дней",
+            color="Зеленый",
+        )
+
+    def test_lawn_grass_creation(self) -> None:
+        """Тестирование создания газонной травы."""
+        self.assertEqual(self.lawn_grass.name, "Газонная трава 1")
+        self.assertEqual(self.lawn_grass.country, "Россия")
+        self.assertEqual(self.lawn_grass.germination_period, "10-14 дней")
+
+    def test_lawn_grass_price(self) -> None:
+        """Тестирование изменения цены газонной травы."""
+        self.lawn_grass.price = 55.0
+        self.assertEqual(self.lawn_grass.price, 55.0)
