@@ -69,6 +69,35 @@ class Category:
         """Возвращает список продуктов в категории."""
         return self.__products
 
+    def middle_price(self) -> float:
+        """
+                Подсчитывает среднюю цену всех товаров в категории.
+
+                Возвращает:
+                    float: Средняя цена товаров. Если товаров нет, возвращает 0.
+
+                Исключения:
+                    ZeroDivisionError: Если сумма всех цен делится на ноль.
+
+                Примечание:
+                    Если нет товаров в категории, возвращается 0 без выбрасывания исключения.
+                """
+        try:
+            if not self.__products:
+                return 0.0
+
+            total_price = sum(product.price * product.quantity for product in self.__products)
+            total_quantity = sum(product.quantity for product in self.__products)
+
+            if total_quantity == 0:
+                return 0.0
+
+            average = total_price / total_quantity
+            return average
+
+        except ZeroDivisionError:
+            return 0.0
+
 
 class CategoryIterator(Iterator):
     def __init__(self, category: "Category"):
