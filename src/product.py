@@ -1,7 +1,10 @@
 from typing import Any, Dict, List, Optional
 
+from src.baseproduct import BaseProduct
+from src.mixinlogger import MixinLogger
 
-class Product:
+
+class Product(BaseProduct, MixinLogger):
     """
     Класс, представляющий продукт.
 
@@ -27,10 +30,12 @@ class Product:
             price (float): Цена продукта.
             quantity (int): Количество продукта на складе.
         """
+
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
+        super().__init__(name, description, price, quantity)
 
     def __str__(self) -> str:
         return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."

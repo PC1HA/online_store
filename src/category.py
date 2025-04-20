@@ -1,7 +1,5 @@
 from typing import Any, Iterator, List, Optional
 
-from isort.exceptions import ProfileDoesNotExist
-
 from src.product import Product
 
 
