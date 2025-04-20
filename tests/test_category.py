@@ -47,3 +47,18 @@ class TestCategory(unittest.TestCase):
         """Тестирование итератора категории."""
         products: List[Product] = list(iter(self.category))
         self.assertEqual(products, [self.product1, self.product2])
+
+    def test_average_price_with_products(self):
+        """Тестирование average_price с продуктами в категории."""
+        category = Category("Электроника", "Различные электронные устройства")
+        category.add_product(Product("Телефон",'', 500.0, 10))
+        category.add_product(Product("Ноутбук",'', 1200.0, 5))
+
+        expected_average = (500.0 * 10 + 1200.0 * 5) / (10 + 5)
+        assert category.middle_price() == expected_average
+
+    def test_average_price_empty_category(self):
+        """Тестирование average_price с пустой категорией."""
+        empty_category = Category("Пустая категория", "Нет продуктов")
+
+        assert empty_category.middle_price() == 0.0
